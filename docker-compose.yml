@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: unionos
       POSTGRES_USER: unionos
-      POSTGRES_PASSWORD: unionos_password
+      POSTGRES_PASSWORD: 957dac96cb58d06515fea4dc
     ports:
       - "5432:5432"
     volumes:

@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: unionos_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: unionos
+      POSTGRES_USER: unionos
+      POSTGRES_PASSWORD: unionos_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - unionos_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  unionos_postgres_data:

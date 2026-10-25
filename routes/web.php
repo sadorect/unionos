@@ -12,11 +12,14 @@ use App\Http\Controllers\Settings\NotificationSettingsController;
 use App\Http\Controllers\System\SystemHealthController;
 use App\Http\Controllers\System\SystemMetricsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\State\StateController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return redirect()->route('home');
-});
+Route::get('/', [WelcomeController::class, 'show'])->name('welcome');
+
+Route::get('/guide', [GuideController::class, 'show'])->name('guide');
 
 Route::middleware('throttle:auth-sensitive')->group(function () {
     Route::get('/invite/{token}', [CoupleInviteController::class, 'show'])
@@ -101,4 +104,14 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin'])->name('toggle-admin');
+});
+
 require __DIR__.'/auth.php';
+
+// --- AppDash SSO handoff (dashboard.sadorect.com) --- do not edit by hand ---
+Route::get('/_dash/sso', \App\Http\Controllers\DashboardSsoController::class)
+    ->middleware('throttle:10,1')
+    ->name('dashboard.sso');

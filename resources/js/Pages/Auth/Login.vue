@@ -4,6 +4,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
@@ -85,11 +86,10 @@ const submit = () => {
 
                 <div>
                     <InputLabel for="password" value="Password" />
-                    <TextInput
+                    <PasswordInput
                         id="password"
                         v-model="form.password"
                         class="mt-2"
-                        type="password"
                         required
                         autocomplete="current-password"
                     />

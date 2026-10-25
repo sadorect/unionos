@@ -14,6 +14,7 @@ class RegenerateCoupleInvite
 {
     public function __construct(
         private readonly CoupleAccessService $access,
+        private readonly SendCoupleInvite $sendCoupleInvite,
     ) {
     }
 
@@ -25,7 +26,7 @@ class RegenerateCoupleInvite
             ]);
         }
 
-        return DB::transaction(function () use ($couple, $email) {
+        $invite = DB::transaction(function () use ($couple, $email) {
             $couple->invites()
                 ->whereNull('used_at')
                 ->delete();
@@ -36,5 +37,9 @@ class RegenerateCoupleInvite
                 'expires_at' => now()->addHours((int) config('unionos.invites.expires_after_hours')),
             ]);
         });
+
+        $this->sendCoupleInvite->handle($invite);
+
+        return $invite;
     }
 }

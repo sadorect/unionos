@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Couple;
 
 use App\Actions\Couple\AcceptCoupleInvite;
 use App\Actions\Couple\RegenerateCoupleInvite;
+use App\Actions\Couple\SendCoupleInvite;
 use App\Domains\Couple\Enums\CoupleStatus;
 use App\Domains\Couple\Models\CoupleInvite;
 use App\Domains\Couple\Services\CoupleAccessService;
@@ -21,6 +22,7 @@ class CoupleInviteController extends Controller
         private readonly CoupleStateService $state,
         private readonly CoupleAccessService $access,
         private readonly RegenerateCoupleInvite $regenerateCoupleInvite,
+        private readonly SendCoupleInvite $sendCoupleInvite,
         private readonly AcceptCoupleInvite $acceptCoupleInvite,
     ) {
     }
@@ -62,9 +64,20 @@ class CoupleInviteController extends Controller
             ]);
         }
 
-        if ($this->access->currentInvite($couple) !== null) {
+        $existing = $this->access->currentInvite($couple);
+
+        if ($existing !== null) {
+            // An invite is already outstanding. If it targets the same address,
+            // treat "Send" as a re-send rather than a dead-end error.
+            if (strcasecmp($existing->email, $validated['email']) === 0) {
+                $this->sendCoupleInvite->handle($existing);
+
+                return redirect()->route('couple.pending')
+                    ->with('success', 'Invitation re-sent.');
+            }
+
             return back()->withErrors([
-                'email' => 'An active invitation already exists.',
+                'email' => 'An active invitation already exists. Cancel it before inviting a different email address.',
             ]);
         }
 

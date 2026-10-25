@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'couple.member' => \App\Http\Middleware\EnsureCoupleMember::class,
             'couple.active' => \App\Http\Middleware\EnsureActiveCouple::class,
             'system.token' => \App\Http\Middleware\RequireSystemToken::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

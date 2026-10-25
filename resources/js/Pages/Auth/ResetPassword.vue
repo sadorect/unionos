@@ -3,6 +3,7 @@ import CardPanel from '@/Components/CardPanel.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import PasswordInput from '@/Components/PasswordInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
@@ -60,11 +61,10 @@ const submit = () => {
 
                 <div>
                     <InputLabel for="password" value="New password" />
-                    <TextInput
+                    <PasswordInput
                         id="password"
                         v-model="form.password"
                         class="mt-2"
-                        type="password"
                         required
                         autocomplete="new-password"
                     />
@@ -73,11 +73,10 @@ const submit = () => {
 
                 <div>
                     <InputLabel for="password_confirmation" value="Confirm password" />
-                    <TextInput
+                    <PasswordInput
                         id="password_confirmation"
                         v-model="form.password_confirmation"
                         class="mt-2"
-                        type="password"
                         required
                         autocomplete="new-password"
                     />

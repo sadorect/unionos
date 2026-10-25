@@ -15,6 +15,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
+use Throwable;
 
 class SendUnionNotificationJob implements ShouldQueue
 {
@@ -66,7 +68,25 @@ class SendUnionNotificationJob implements ShouldQueue
             return;
         }
 
-        $user->notify($notification);
+        try {
+            $user->notify($notification);
+        } catch (Throwable $e) {
+            NotificationDispatchLog::query()->create([
+                'user_id' => $user->id,
+                'kind' => $this->kind,
+                'channel' => 'mail',
+                'status' => 'failed',
+                'reason' => Str::limit($e->getMessage(), 250),
+            ]);
+
+            event(new FeatureActivityOccurred('notification', 'failed', [
+                'status' => 'failed',
+                'kind' => $this->kind,
+                'channel' => 'mail',
+            ]));
+
+            throw $e;
+        }
 
         NotificationDispatchLog::query()->create([
             'user_id' => $user->id,

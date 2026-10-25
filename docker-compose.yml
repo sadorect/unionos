@@ -10,9 +10,15 @@ services:
       POSTGRES_USER: unionos
       POSTGRES_PASSWORD: 957dac96cb58d06515fea4dc
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - unionos_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unionos -d unionos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   unionos_postgres_data:
